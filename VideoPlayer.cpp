@@ -54,7 +54,7 @@ int VideoPlayer::sfp_refresh_thread(int timeInterval, bool& exitRefresh, bool& f
 		//SDL_Delay(60);
 		if (faster) {
 			//std::this_thread::sleep_for(std::chrono::milliseconds(timeInterval / 2));
-			std::this_thread::sleep_for(std::chrono::milliseconds(timeInterval));
+			std::this_thread::sleep_for(std::chrono::milliseconds(timeInterval)/2);
 		}
 		else {
 			std::this_thread::sleep_for(std::chrono::milliseconds(timeInterval));
@@ -93,12 +93,12 @@ double VideoPlayer::getFrameRate() const {
 int VideoPlayer::play(uint64_t* pts_audio)
 {
 	AVPacket* packet = (AVPacket*)av_malloc(sizeof(AVPacket));
-	//ÄÚ´æ·ÖÅä
+	//å†…å­˜åˆ†é…
 	AVFrame* pFrame = av_frame_alloc();
 	AVFrame* pFrameYUV = av_frame_alloc();
-	//»º³åÇø·ÖÅäÄÚ´æ
+	//ç¼“å†²åŒºåˆ†é…å†…å­˜
 	unsigned char* out_buffer = (unsigned char*)av_malloc(av_image_get_buffer_size(AV_PIX_FMT_YUV420P, pCodeCtx->width, pCodeCtx->height, 1));
-	//³õÊ¼»¯»º³åÇø
+	//åˆå§‹åŒ–ç¼“å†²åŒº
 	av_image_fill_arrays(pFrameYUV->data, pFrameYUV->linesize, out_buffer,
 		AV_PIX_FMT_YUV420P, pCodeCtx->width, pCodeCtx->height, 1);
 	img_convert_ctx = sws_getContext(pCodeCtx->width, pCodeCtx->height, pCodeCtx->pix_fmt,
@@ -127,7 +127,7 @@ int VideoPlayer::play(uint64_t* pts_audio)
 			if (ret < 0) {
 				printf("Decode Error.\n");
 			}
-			if (!got_picture)		//got_pictureÎª0ËµÃ÷³É¹¦´Ópacket½âÂë³öfream
+			if (!got_picture)		//got_pictureä¸º0è¯´æ˜ŽæˆåŠŸä»Žpacketè§£ç å‡ºfream
 			{
 				sws_scale(img_convert_ctx, (const unsigned char* const*)pFrame->data, pFrame->linesize, 0, pCodeCtx->height, pFrameYUV->data, pFrameYUV->linesize);
 			}
